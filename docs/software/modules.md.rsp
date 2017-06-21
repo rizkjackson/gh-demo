@@ -1,0 +1,121 @@
+<%
+library("R.utils")
+trim <- function(x) {
+  if (!is.character(x)) return(x)
+  x <- sub("^[\t\n\f\r ]*", "", x)
+  sub("[\t\n\f\r ]*$", "", x)
+}
+as_html <- function(x) {
+  if (!is.character(x)) return(x)
+  x <- gsub("(\n|\n\r)", "\n<br>", x)
+  ## URLs -> HTML anchors
+  x <- gsub("((ftp|http|https)://[^ \n]+)", '<a href="\\1">\\1</a>', x)
+  x
+}
+
+style <- cmdArg(style = FALSE)
+%>
+<%
+spider <- file.path(Sys.getenv("LMOD_DIR"), "spider")
+stopifnot(utils::file_test("-x", spider))
+module_repos <- "CBC"
+modulepath <- file.path("/home/shared/cbc/apps/modulefiles", module_repos)
+stopifnot(utils::file_test("-d", modulepath))
+json <- system2(spider, args = c("-o jsonSoftwarePage", modulepath), stdout = TRUE)
+x <- jsonlite::fromJSON(json)
+o <- order(x$package)
+x <- x[o,]
+keep <- !grepl("^[.]", x$package)
+x <- x[keep,]	     
+%>
+<% if (style) { %>
+<style type="text/css">
+table {
+  width: 100%;
+  border: solid 1px black;
+}
+  
+tr {
+  vertical-align: top;
+  text-align: left;
+  padding: 0px;
+}
+  
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+th, td {
+  vertical-align: top;
+  border-bottom: 1px solid #ddd;
+}
+</style>
+<% } # if (style) %>
+
+<%-- Add a front-matter warning to the Markdown file --%>
+<!--
+WARNING: do _not_ update this file; it is automatically generated from modules.md.rsp and will be overwritten.
+-->
+
+<div class="alert alert-warning" role="alert">
+Environment modules are currently in beta - to enable them, see Configuration / <a href="{{ '/configuration/lmod.html' | relative_url }}">Enable Software Modules</a>.
+</div>
+
+# Software
+
+To use one or more of the below software modules, use `module load <name>` or `module load <name>/<version>`.  Here are a few examples:
+```sh
+module load bowtie2
+module load bowtie2/2.2.6
+module load python r bwa
+```
+
+
+## Modules
+
+_The below information was automatically generated on <%= Sys.time() %>._
+
+
+### Module Repository '<%= module_repos %>'
+
+Location: `MODULEPATH=<%= gsub("/home/shared/cbc/apps/modulefiles", "$MODULEPATH_ROOT", modulepath) %>`
+
+<table>
+ <tr>
+  <th>name &amp; versions</th>
+  <th>description</th>
+ </tr>
+<% for (ii in seq_len(nrow(x))) { %>
+<%
+m <- x[ii,]
+m <- lapply(m, FUN = trim)
+versions <- m$versions[[1]]
+for (cc in seq_len(ncol(versions))) {
+  versions[[cc]] <- trim(versions[[cc]])
+}
+m$versions[[1]] <- versions
+helps <- unique(versions$help)
+help <- helps[[1]]
+vers <- sort(unique(versions$versionName))
+%>
+ <tr>
+  <td>
+  <strong><%= m$package %></strong><br>
+  <%= paste(vers, collapse = ", ") %>
+  </td>
+  <td>
+  <strong><%= as_html(help) %></strong><br>
+  <%= as_html(m$description) %><br>
+  URL: <%= as_html(m$url) %><br>
+  </td>
+ </tr>
+<% } # for (ii in ...) %>
+</table>
