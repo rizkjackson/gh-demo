@@ -5,5 +5,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam metus enim, ornar
 Vestibulum sagittis ornare lectus ac rutrum. Integer vehicula nunc vel ante porttitor semper. Maecenas semper risus a ullamcorper condimentum. Proin ut nibh sollicitudin, tristique augue ut, pretium nunc. Donec vehicula iaculis mauris, non condimentum nibh ultricies in. Praesent faucibus eros id nisl volutpat mollis quis id orci. Morbi laoreet libero in gravida consectetur. Sed elementum interdum purus vitae vestibulum.
 
 <div class="alert alert-warning" role="alert">
-This site is just a mockup populated with content from the <a href="http://cbc.ucsf.edu/hpc/">HPC environment of UCSF Helen Diller Family Comprehensive Cancer Center</a> internal wiki.
-</div>
+This site is just a mockup populated with content from the <a href="http://cbc.ucsf.edu/hpc/">HPC environment of UCSF Helen Diller Family Comprehensive Cancer Center</a> internal wiki.</div>
+
+While this is a **great** start, <a href="http://ichs.ucsf.edu/people/#staff">Angela</a> is wondering what the next steps might be to get a few pages prepped for the public/mostly-static Wynton site to point to...
+
